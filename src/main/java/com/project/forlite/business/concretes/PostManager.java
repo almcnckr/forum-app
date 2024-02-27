@@ -8,9 +8,9 @@ import com.project.forlite.business.rules.PostBusinessRules;
 import com.project.forlite.business.rules.UserBusinessRules;
 import com.project.forlite.core.utilities.mappers.ModelMapperService;
 import com.project.forlite.dataAccess.PostRepository;
+import com.project.forlite.dataAccess.UserRepository;
 import com.project.forlite.entities.Post;
 import lombok.AllArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +20,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class PostManager implements PostService {
     private PostRepository postRepository;
+    private UserRepository userRepository;
     private ModelMapperService modelMapperService;
     private UserBusinessRules userBusinessRules;
     private PostBusinessRules postBusinessRules;
@@ -28,6 +29,7 @@ public class PostManager implements PostService {
     public List<GetPostResponse> getAllPosts(Optional<Integer> userId) {
         List<Post> posts;
         if (userId.isPresent()) {
+            userBusinessRules.checkIfUserNotExists(userId.get());
             posts = postRepository.findByUserId(userId);
             return posts.stream()
                     .map(post -> modelMapperService.forResponse().map(post, GetPostResponse.class)).toList();
@@ -39,28 +41,33 @@ public class PostManager implements PostService {
 
     @Override
     public GetPostResponse getPostById(int id) {
+        postBusinessRules.checkIfPostNotExists(id);
+
         Post post = postRepository.findById(id).orElse(null);
-        // throw new exception
+
         return modelMapperService.forResponse().map(post, GetPostResponse.class);
     }
 
     @Override
-    public Post createPost(CreatePostRequest createPostRequest) {
+    public GetPostResponse createPost(CreatePostRequest createPostRequest) {
         userBusinessRules.checkIfUserNotExists(createPostRequest.getUserId());
 
         Post post = modelMapperService.forRequest().map(createPostRequest, Post.class);
 
-        return postRepository.save(post);
+        postRepository.save(post);
+
+        return modelMapperService.forResponse().map(post, GetPostResponse.class);
     }
 
     @Override
-    public Post updatePost(UpdatePostRequest updatePostRequest) {
+    public GetPostResponse updatePost(UpdatePostRequest updatePostRequest) {
         postBusinessRules.checkIfPostNotExists(updatePostRequest.getId());
 
-        Post post = postRepository.findById(updatePostRequest.getId()).orElse(null);
-        post.setTitle(updatePostRequest.getTitle());
-        post.setText(updatePostRequest.getText());
-        return postRepository.save(post);
+        Post post = modelMapperService.forRequest().map(updatePostRequest, Post.class);
+        Post postForUser = postRepository.findById(updatePostRequest.getId()).orElse(null);
+        post.setUser(postForUser.getUser());
+        postRepository.save(post);
+        return modelMapperService.forResponse().map(post, GetPostResponse.class);
     }
 
     @Override

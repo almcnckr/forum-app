@@ -13,9 +13,9 @@ public interface PostService {
 
     GetPostResponse getPostById(int id);
 
-    Post createPost(CreatePostRequest createPostRequest);
+    GetPostResponse createPost(CreatePostRequest createPostRequest);
 
-    Post updatePost(UpdatePostRequest updatePostRequest);
+    GetPostResponse updatePost(UpdatePostRequest updatePostRequest);
 
     void deletePostById(int id);
 }

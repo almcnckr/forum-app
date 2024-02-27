@@ -1,6 +1,5 @@
 package com.project.forlite.business.responses;
 
-import com.project.forlite.entities.Like;
 import lombok.Data;
 
 import java.util.List;

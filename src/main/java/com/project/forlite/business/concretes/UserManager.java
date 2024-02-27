@@ -3,7 +3,6 @@ package com.project.forlite.business.concretes;
 import com.project.forlite.business.abstracts.UserService;
 import com.project.forlite.business.responses.GetUserResponse;
 import com.project.forlite.business.rules.UserBusinessRules;
-import com.project.forlite.core.utilities.exceptions.BusinessException;
 import com.project.forlite.core.utilities.mappers.ModelMapperService;
 import com.project.forlite.dataAccess.UserRepository;
 import com.project.forlite.entities.User;

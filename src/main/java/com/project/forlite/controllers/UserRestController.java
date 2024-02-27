@@ -3,7 +3,6 @@ package com.project.forlite.controllers;
 import com.project.forlite.business.abstracts.UserService;
 import com.project.forlite.business.responses.GetUserResponse;
 import com.project.forlite.entities.User;
-import com.project.forlite.dataAccess.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

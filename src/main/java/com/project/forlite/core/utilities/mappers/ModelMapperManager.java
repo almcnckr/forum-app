@@ -2,8 +2,6 @@ package com.project.forlite.core.utilities.mappers;
 
 import com.project.forlite.business.requests.CreatePostRequest;
 import com.project.forlite.entities.Post;
-import com.project.forlite.entities.User;
-import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
