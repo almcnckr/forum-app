@@ -27,7 +27,7 @@ public class LikeRestController {
     }
 
     @PostMapping
-    public Like createLike(@RequestBody CreateLikeRequest createLikeRequest){
+    public GetLikeResponse createLike(@RequestBody CreateLikeRequest createLikeRequest){
         return likeService.createLike(createLikeRequest);
     }
 

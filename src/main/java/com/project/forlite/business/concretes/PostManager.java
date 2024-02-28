@@ -8,7 +8,6 @@ import com.project.forlite.business.rules.PostBusinessRules;
 import com.project.forlite.business.rules.UserBusinessRules;
 import com.project.forlite.core.utilities.mappers.ModelMapperService;
 import com.project.forlite.dataAccess.PostRepository;
-import com.project.forlite.dataAccess.UserRepository;
 import com.project.forlite.entities.Post;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,6 @@ import java.util.Optional;
 @AllArgsConstructor
 public class PostManager implements PostService {
     private PostRepository postRepository;
-    private UserRepository userRepository;
     private ModelMapperService modelMapperService;
     private UserBusinessRules userBusinessRules;
     private PostBusinessRules postBusinessRules;

@@ -12,7 +12,7 @@ public interface LikeService {
 
     GetLikeResponse getLikeById(int likeId);
 
-    Like createLike(CreateLikeRequest createLikeRequest);
+    GetLikeResponse createLike(CreateLikeRequest createLikeRequest);
 
     void deleteLikeById(int likeId);
 }
