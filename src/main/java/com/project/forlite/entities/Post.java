@@ -25,7 +25,4 @@ public class Post {
     @Lob
     @Column(columnDefinition = "text")
     private String text;
-
-    @OneToMany(mappedBy = "post")
-    private List<Like> likes;
 }

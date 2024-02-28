@@ -6,6 +6,9 @@ import com.project.forlite.business.abstracts.UserService;
 import com.project.forlite.business.requests.CreateCommentRequest;
 import com.project.forlite.business.requests.UpdateCommentRequest;
 import com.project.forlite.business.responses.GetCommentResponse;
+import com.project.forlite.business.rules.CommentBusinessRules;
+import com.project.forlite.business.rules.PostBusinessRules;
+import com.project.forlite.business.rules.UserBusinessRules;
 import com.project.forlite.core.utilities.mappers.ModelMapperService;
 import com.project.forlite.dataAccess.CommentRepository;
 import com.project.forlite.entities.Comment;
@@ -21,18 +24,23 @@ import java.util.Optional;
 @AllArgsConstructor
 public class CommentManager implements CommentService {
     private CommentRepository commentRepository;
-    private UserService userService;
-    private PostService postService;
     private ModelMapperService modelMapperService;
+    private UserBusinessRules userBusinessRules;
+    private PostBusinessRules postBusinessRules;
+    private CommentBusinessRules commentBusinessRules;
 
     @Override
     public List<GetCommentResponse> getAllComments(Optional<Integer> userId, Optional<Integer> postId) {
         List<Comment> comments;
         if (userId.isPresent() && postId.isPresent()) {
+            userBusinessRules.checkIfUserNotExists(userId.get());
+            postBusinessRules.checkIfPostNotExists(postId.get());
             comments = commentRepository.findByUserIdAndPostId(userId.get(), postId.get());
         } else if (userId.isPresent()) {
+            userBusinessRules.checkIfUserNotExists(userId.get());
             comments = commentRepository.findByUserId(userId.get());
         } else if (postId.isPresent()) {
+            postBusinessRules.checkIfPostNotExists(postId.get());
             comments = commentRepository.findByPostId(postId.get());
         } else {
             comments = commentRepository.findAll();
@@ -42,34 +50,44 @@ public class CommentManager implements CommentService {
 
     @Override
     public GetCommentResponse getCommentById(int commentId) {
-        //throw exception
-        return modelMapperService.forResponse().map(commentRepository.findById(commentId).orElse(null), GetCommentResponse.class);
+        commentBusinessRules.checkIfCommentNotExists(commentId);
+
+        Comment comment = commentRepository.findById(commentId).orElse(null);
+
+        return modelMapperService.forResponse().map(comment, GetCommentResponse.class);
     }
 
     @Override
-    public Comment createComment(CreateCommentRequest createCommentRequest) {
-        User user = modelMapperService.forResponse().map(userService.getUserById(createCommentRequest.getUserId()), User.class);
-        Post post = modelMapperService.forResponse().map(postService.getPostById(createCommentRequest.getPostId()), Post.class);
-        if (user == null || post == null)
-            return null;
+    public GetCommentResponse createComment(CreateCommentRequest createCommentRequest) {
+        userBusinessRules.checkIfUserNotExists(createCommentRequest.getUserId());
+        postBusinessRules.checkIfPostNotExists(createCommentRequest.getPostId());
 
         Comment comment = modelMapperService.forRequest().map(createCommentRequest, Comment.class);
-        return commentRepository.save(comment);
+
+        commentRepository.save(comment);
+
+        return modelMapperService.forResponse().map(comment, GetCommentResponse.class);
     }
 
     @Override
-    public Comment updateComment(UpdateCommentRequest updateCommentRequest) {
-        Optional<Comment> comment = commentRepository.findById(updateCommentRequest.getId());
-        if (comment.isPresent()) {
-            Comment updatedComment = comment.get();
-            updatedComment.setText(updateCommentRequest.getText());
-            return commentRepository.save(updatedComment);
-        }
-        return null;
+    public GetCommentResponse updateComment(UpdateCommentRequest updateCommentRequest) {
+        commentBusinessRules.checkIfCommentNotExists(updateCommentRequest.getId());
+
+        Comment comment = modelMapperService.forRequest().map(updateCommentRequest, Comment.class);
+        Comment tempComment = commentRepository.findById(updateCommentRequest.getId()).orElse(null);
+        
+        comment.setPost(tempComment.getPost());
+        comment.setUser(tempComment.getUser());
+
+        commentRepository.save(comment);
+
+        return modelMapperService.forResponse().map(comment, GetCommentResponse.class);
     }
 
     @Override
     public void deleteCommentById(int commentId) {
+        commentBusinessRules.checkIfCommentNotExists(commentId);
+
         commentRepository.deleteById(commentId);
     }
 }

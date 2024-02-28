@@ -13,9 +13,9 @@ public interface CommentService {
 
     GetCommentResponse getCommentById(int commentId);
 
-    Comment createComment(CreateCommentRequest createCommentRequest);
+    GetCommentResponse createComment(CreateCommentRequest createCommentRequest);
 
-    Comment updateComment(UpdateCommentRequest updateCommentRequest);
+    GetCommentResponse updateComment(UpdateCommentRequest updateCommentRequest);
 
     void deleteCommentById(int commentId);
 }

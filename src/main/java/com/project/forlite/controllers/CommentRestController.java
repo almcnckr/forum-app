@@ -28,12 +28,12 @@ public class CommentRestController {
     }
 
     @PostMapping
-    public Comment createComment(@RequestBody CreateCommentRequest createCommentRequest){
+    public GetCommentResponse createComment(@RequestBody CreateCommentRequest createCommentRequest){
         return commentService.createComment(createCommentRequest);
     }
 
     @PutMapping
-    public Comment updateComment(@RequestBody UpdateCommentRequest updateCommentRequest){
+    public GetCommentResponse updateComment(@RequestBody UpdateCommentRequest updateCommentRequest){
         return commentService.updateComment(updateCommentRequest);
     }
 

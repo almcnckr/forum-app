@@ -11,5 +11,4 @@ public class GetPostResponse {
     private String userName;
     private String text;
     private String title;
-    private List<GetLikeResponse> likes;
 }
